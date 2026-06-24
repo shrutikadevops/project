@@ -20,7 +20,7 @@ pipeline {
                     steps{
                     sh '''
                     cd /mnt/slave/project
-                    mvn clean package
+                    /mnt/apache-maven-3.9.16/bin/mvn clean package
                     cd /mnt/slave/project/target/
                     aws s3 cp LoginWebApp.war s3://shrutika-2001
                     '''
