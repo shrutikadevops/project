@@ -1,0 +1,47 @@
+pipeline {
+    agent{
+        node{
+            label 'built-in'
+            customWorkspace '/mnt/build'
+            
+        }
+    }
+    stages {
+                stage ('SCM') {
+                    steps{
+                     sh '''
+                        rm -rf /mnt/build/project
+                        git clone https://github.com/shrutikadevops/project.git
+                        '''
+                }
+                }
+                
+                stage ('build') {
+                    steps{
+                    sh '''
+                    cd /mnt/build/project
+                    mvn clean package
+                    cd /mnt/build/project/target/
+                    aws s3 cp LoginWebApp.war s3://shrutika-2001
+                    '''
+                }
+                }
+                
+                stage ('deploy') {
+                    agent{
+                    node{
+                        label 'slave-1'
+                        customWorkspace '/mnt/slave'
+                    }
+                }
+                steps{
+                    sh '''
+                    cd /mnt/slave
+                    aws s3 cp s3://shrutika-2001/LoginWebApp.war .
+                    cp LoginWebApp.war /mnt/apache-tomcat-10.1.55/webapps
+                    '''
+                }
+                }
+                
+            }
+}
