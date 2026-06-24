@@ -31,7 +31,7 @@ pipeline {
                     agent{
                     node{
                         label 'slave-1'
-                        customWorkspace '/mnt/slave'
+                        customWorkspace '/mnt/slave/workspace'
                     }
                 }
                 steps{
